@@ -2,18 +2,18 @@ const express = require("express");
 const Product = require("../models/products")
 // 1. Create a new router
 //const router = new express.Router();
-const router = new express.Router();
+const productRouter = new express.Router();
 // 2. we need to define the router
-router.get("/asif", (req, res) => {
+productRouter.get("/asif", (req, res) => {
     res.send("Hello Buddy!")
 })
 // Default path
-router.get("/", (req, res) => {
+productRouter.get("/", (req, res) => {
     res.send("hello from the express")
 })
 
 // post request using async await
-router.post("/products", async (req, res) => {
+productRouter.post("/products", async (req, res) => {
     try {
         const product = new Product(req.body);
         const createProduct = await product.save();
@@ -37,7 +37,7 @@ app.post("/students", (req, res) => {
 });*/
 
 // get request
-router.get("/products", async (req, res) => {
+productRouter.get("/products", async (req, res) => {
     try {
         const productsData = await Product.find();
         res.send(productsData);
@@ -47,7 +47,7 @@ router.get("/products", async (req, res) => {
     }
 });
 // get the individual student data using id
-router.get("/products/:id", async (req, res) => {
+productRouter.get("/products/:id", async (req, res) => {
     try {
         const id = req.params.id;
 
@@ -65,7 +65,7 @@ router.get("/products/:id", async (req, res) => {
     }
 })
 // delete the students by its id
-router.delete("/students/:id", async (req, res) => {
+productRouter.delete("/products/:id", async (req, res) => {
     try {
         const deleteStudent = await Student.findByIdAndDelete(req.params.id);
         if (!req.params.id) {
@@ -79,7 +79,7 @@ router.delete("/students/:id", async (req, res) => {
 
 
 // update the students document using its id
-router.patch("/students/:id", async (req, res) => {
+productRouter.patch("/products/:id", async (req, res) => {
     try {
         const _id = req.params.id;
         const updatedStudent = await Student.findByIdAndUpdate({ _id: _id }, req.body,
@@ -90,4 +90,4 @@ router.patch("/students/:id", async (req, res) => {
     }
 })
 
-module.exports = router;
+module.exports = productRouter;
