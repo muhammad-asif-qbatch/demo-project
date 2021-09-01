@@ -49,14 +49,16 @@ router.get("/products", async (req, res) => {
 // get the individual student data using id
 router.get("/products/:id", async (req, res) => {
     try {
-        const _id = req.params.id;
-        const studentData = await Product.findById({ _id: _id });
-        res.send(studentData);
-        if (!studentData) {
+        const id = req.params.id;
+
+        const productData = await Product.find({ id: id });
+        //console.log(id)
+        res.send(productData);
+        if (!productData) {
             return res.status(404).send();
         }
         else {
-            res.send(studentData);
+            res.send(productData);
         }
     } catch (error) {
         res.status(500).send(error);
