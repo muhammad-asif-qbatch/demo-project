@@ -44,24 +44,34 @@ app.post("/students", (req, res) => {
 });*/
 
 cartRouter.delete("/carts/:id", async (req, res) => {
+    const id = req.params.id;
+    if (!id) {
+        return res.status(400).send()
+    }
+
     try {
-        console.log(req.params.id, "id")
-        const deleteCart = await Cart.findOneAndDelete(req.params.id);
-        if (!req.params.id) {
-            return res.status(400).send()
-        }
-        res.send(deleteCart);
+        console.log("Id recieved at Backend: ", id)
+        const deletedCart = await Cart.findOneAndDelete({ id });
+        console.log("Deleted Id: ", deletedCart.id);
+
+        res.send(deletedCart);
     } catch (error) {
         res.status(500).send(error)
     }
 });
 
 cartRouter.patch("/carts/:id", async (req, res) => {
+    const id = req.params.id;
+    console.log("id in patch is ", id);
+    const count = req.body.count;
+    const pCount = { count: count };
+    const pId = { id: id }
+    console.log("count in patch is ", pCount)
     try {
-        const id = req.params.id;
-        const updatedCart = await Cart.findOneAndUpdate({ id }, { count: req.params.count + 1 },
-            { new: true });
+        const updatedCart = await Cart.findOneAndUpdate(pId, pCount, { new: true });
+        console.log(updatedCart)
         res.send(updatedCart);
+
     } catch (error) {
         res.status(400).send(error)
     }

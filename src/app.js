@@ -13,8 +13,8 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 // We need to register our router
-app.use('/product' , require("./routers/productRoute.js"))
-app.use('/cart' , require("./routers/cartRoute.js"));
+app.use('/product', require("./routers/productRoute.js"))
+app.use('/cart', require("./routers/cartRoute.js"));
 
 app.listen(port, () => {
     console.log(`Connection is setup at ${port}`)
