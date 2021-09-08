@@ -1,6 +1,5 @@
 const express = require("express");
-const Product = require("../models/products")
-// 1. Create a new router
+const Product = require("../models/products");
 //const router = new express.Router();
 const productRouter = new express.Router();
 // 2. we need to define the router
