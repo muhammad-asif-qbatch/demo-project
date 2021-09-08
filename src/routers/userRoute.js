@@ -51,9 +51,7 @@ userRouter.post("/register", async (req, res) => {
 
 userRouter.post("/login", async (req, res) => {
 
-    // Our login logic starts here
     try {
-        // Get user input
         const { email, password } = req.body;
 
         // Validate user input
@@ -75,11 +73,13 @@ userRouter.post("/login", async (req, res) => {
 
             // save user token
             user.token = token;
-
             // user
+            console.log(user)
             res.status(200).json(user);
+        } else {
+            console.log('haha')
+            res.status(400).send("Invalid Credentials");
         }
-        res.status(400).send("Invalid Credentials");
     } catch (err) {
         console.log(err);
     }

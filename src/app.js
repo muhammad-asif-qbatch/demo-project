@@ -3,6 +3,7 @@ require("dotenv").config();
 require("./db/conn").connect();
 const cors = require("cors");
 const app = express();
+const auth = require("./middlewear/auth");
 //const port = process.env.PORT || 3000;
 const { API_PORT } = process.env;
 const port = process.env.PORT || API_PORT;
