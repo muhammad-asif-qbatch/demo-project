@@ -80,9 +80,9 @@ cartRouter.patch("/carts/:id", async (req, res) => {
 
 cartRouter.get("/carts/:id", async (req, res) => {
     try {
-        const id = req.params.id;
+        const user_id = req.params.id;
 
-        const cartData = await Cart.find({ id });
+        const cartData = await Cart.find({ user_id });
         //console.log(id)
         res.send(cartData);
         if (!cartData) {
