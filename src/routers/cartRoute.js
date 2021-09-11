@@ -1,5 +1,8 @@
 const express = require("express");
 const Cart = require("../models/carts");
+const jwt = require("jsonwebtoken");
+const auth = require("../middlewear/auth");
+const config = process.env;
 // 1. Create a new router
 const cartRouter = new express.Router();
 // 2. we need to define the router
@@ -8,19 +11,43 @@ cartRouter.get("/", (req, res) => {
 })
 // post request using async await
 cartRouter.post("/carts", async (req, res) => {
+    // console.log('I am in post request');
+    // console.log('Request: ', JSON.stringify(req.body, null, 2));
+    const token = req.headers.authorization.split(' ')[1];
+    console.log(token);
     try {
+        const decoded = jwt.verify(token, config.TOKEN_KEY);
+        console.log(decoded);
+        if (!decoded)
+            throw new Error('Invalid Token');
+        const { email } = decoded;
+        console.log('Email : ', email);
         const count = req.body.count;
         const id = req.body.id;
-        const isexist = await Cart.find({ id })
-        const update = await Cart.findOneAndUpdate({ id }, { count: isexist[0].count + count })
-        res.send(update);
+        const user_id = email;
+        const prevCart = await Cart.findOne({ id, user_id });
+        console.log(prevCart);
+        if (prevCart) {
+            const update = await Cart.findOneAndUpdate({ id, user_id }, { count: prevCart.count + count })
+            res.send(update);
+        } else {
+            const data = {
+                id,
+                count,
+                name: req.body.name,
+                price: req.body.price,
+                user_id,
+            };
+            const cart = new Cart(data);
+            const createdCart = await cart.save();
+            res.status(201).send(createdCart);
+        }
+    } catch (err) {
+        res.status(400).send(err);
     }
-    catch (err) {
-        console.log(err.message)
-        const cart = new Cart(req.body);
-        const createCart = await cart.save();
-        res.status(201).send(createCart);
-    }
+
+
+
 });
 cartRouter.get("/all", async (req, res) => {
     try {
@@ -48,12 +75,15 @@ cartRouter.delete("/carts/:id", async (req, res) => {
     if (!id) {
         return res.status(400).send()
     }
-
+    const token = req.headers.authorization.split(' ')[1];
     try {
-        console.log("Id recieved at Backend: ", id)
-        const deletedCart = await Cart.findOneAndDelete({ id });
-        console.log("Deleted Id: ", deletedCart.id);
-
+        const decoded = jwt.verify(token, config.TOKEN_KEY);
+        console.log(decoded);
+        if (!decoded) {
+            throw new Error('Invalid Token');
+        }
+        const { email } = decoded;
+        const deletedCart = await Cart.findOneAndDelete({ id, user_id: email });
         res.send(deletedCart);
     } catch (error) {
         res.status(500).send(error)
@@ -62,14 +92,24 @@ cartRouter.delete("/carts/:id", async (req, res) => {
 
 cartRouter.patch("/carts/:id", async (req, res) => {
     const id = req.params.id;
-    console.log("id in patch is ", id);
-    const count = req.body.count;
-    const pCount = { count: count };
-    const pId = { id: id }
-    console.log("count in patch is ", pCount)
+    if (!id) {
+        return res.status(400).send()
+    }
+    const token = req.headers.authorization.split(' ')[1];
     try {
-        const updatedCart = await Cart.findOneAndUpdate(pId, pCount, { new: true });
-        console.log(updatedCart)
+        const decoded = jwt.verify(token, config.TOKEN_KEY);
+        if (!decoded) {
+            throw new Error('Invalid Token');
+        }
+        const { email } = decoded;
+        const queryData = {
+            id: id,
+            user_id: email
+        }
+        const needsToUpdate = {
+            count: req.body.count
+        }
+        const updatedCart = await Cart.findOneAndUpdate(queryData, needsToUpdate, { new: true });
         res.send(updatedCart);
 
     } catch (error) {
@@ -78,13 +118,34 @@ cartRouter.patch("/carts/:id", async (req, res) => {
 })
 
 
-cartRouter.get("/carts/:id", async (req, res) => {
-    try {
-        const user_id = req.params.id;
+// cartRouter.get("/carts/:id", async (req, res) => {
+//     try {
+//         const user_id = req.params.id;
 
-        const cartData = await Cart.find({ user_id });
-        //console.log(id)
-        res.send(cartData);
+//         const cartData = await Cart.find({ user_id });
+//         //console.log(id)
+//         res.send(cartData);
+//         if (!cartData) {
+//             return res.status(404).send();
+//         }
+//         else {
+//             res.send(cartData);
+//         }
+//     } catch (error) {
+//         res.status(500).send(error);
+//     }
+// })
+cartRouter.get("/list", auth, async (req, res) => {
+    // const token = req.headers.authorization.split(' ')[1];
+    // console.log(token);
+    // console.log('I am in getter request');
+    try {
+        // const decoded = jwt.verify(token, config.TOKEN_KEY);
+        // console.log(decoded);
+        // if (!decoded)
+        //     throw new Error('Invalid Token');
+        const email = req.user;
+        const cartData = await Cart.find({ user_id: email });
         if (!cartData) {
             return res.status(404).send();
         }
@@ -95,5 +156,4 @@ cartRouter.get("/carts/:id", async (req, res) => {
         res.status(500).send(error);
     }
 })
-
 module.exports = cartRouter;

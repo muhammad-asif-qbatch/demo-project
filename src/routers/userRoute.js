@@ -11,8 +11,7 @@ userRouter.post("/register", async (req, res) => {
         if (!(email && password && first_name && last_name)) {
             res.status(400).send("All input is required");
         }
-        // check if user already exist
-        // Validate if user exist in our database
+
         const oldUser = await User.findOne({ email });
 
         if (oldUser) {
@@ -46,7 +45,7 @@ userRouter.post("/register", async (req, res) => {
     } catch (err) {
         console.log(err);
     }
-    // Our register logic ends here
+
 });
 
 userRouter.post("/login", async (req, res) => {
