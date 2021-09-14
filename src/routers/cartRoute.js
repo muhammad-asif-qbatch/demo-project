@@ -3,15 +3,11 @@ const Cart = require("../models/carts");
 const jwt = require("jsonwebtoken");
 const auth = require("../middlewear/auth");
 const config = process.env;
-// 1. Create a new router
 const cartRouter = new express.Router();
-// 2. we need to define the router
 cartRouter.get("/", (req, res) => {
     res.send("hello from the express")
-})
-// post request using async await
+});
 cartRouter.post("/carts", async (req, res) => {
-    // console.log('I am in post request');
     // console.log('Request: ', JSON.stringify(req.body, null, 2));
     const token = req.headers.authorization.split(' ')[1];
     console.log(token);
@@ -45,9 +41,6 @@ cartRouter.post("/carts", async (req, res) => {
     } catch (err) {
         res.status(400).send(err);
     }
-
-
-
 });
 cartRouter.get("/all", async (req, res) => {
     try {
@@ -69,7 +62,6 @@ app.post("/students", (req, res) => {
     })
     //res.send("hello express from restapi.");
 });*/
-
 cartRouter.delete("/carts/:id", async (req, res) => {
     const id = req.params.id;
     if (!id) {
@@ -89,7 +81,6 @@ cartRouter.delete("/carts/:id", async (req, res) => {
         res.status(500).send(error)
     }
 });
-
 cartRouter.patch("/carts/:id", async (req, res) => {
     const id = req.params.id;
     if (!id) {
@@ -116,8 +107,6 @@ cartRouter.patch("/carts/:id", async (req, res) => {
         res.status(400).send(error)
     }
 })
-
-
 // cartRouter.get("/carts/:id", async (req, res) => {
 //     try {
 //         const user_id = req.params.id;
@@ -136,14 +125,7 @@ cartRouter.patch("/carts/:id", async (req, res) => {
 //     }
 // })
 cartRouter.get("/list", auth, async (req, res) => {
-    // const token = req.headers.authorization.split(' ')[1];
-    // console.log(token);
-    // console.log('I am in getter request');
     try {
-        // const decoded = jwt.verify(token, config.TOKEN_KEY);
-        // console.log(decoded);
-        // if (!decoded)
-        //     throw new Error('Invalid Token');
         const email = req.user;
         const cartData = await Cart.find({ user_id: email });
         if (!cartData) {

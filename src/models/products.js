@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-
 const productSchema = new mongoose.Schema({
     id: {
         type: String
@@ -21,11 +20,8 @@ const productSchema = new mongoose.Schema({
     image: {
         type: String
     }
-
 });
 
 // Now, we will create a new collection
-
 const Product = new mongoose.model("Product", productSchema);
-
 module.exports = Product;

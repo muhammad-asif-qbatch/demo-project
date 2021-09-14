@@ -1,17 +1,13 @@
 const express = require("express");
 const Product = require("../models/products");
-//const router = new express.Router();
 const productRouter = new express.Router();
-// 2. we need to define the router
+
 productRouter.get("/asif", (req, res) => {
     res.send("Hello Buddy!")
 })
-// Default path
 productRouter.get("/", (req, res) => {
     res.send("hello from the express")
 })
-
-// post request using async await
 productRouter.post("/products", async (req, res) => {
     try {
         const product = new Product(req.body);
@@ -34,7 +30,6 @@ app.post("/students", (req, res) => {
     })
     //res.send("hello express from restapi.");
 });*/
-
 // get request
 productRouter.get("/products", async (req, res) => {
     try {
@@ -49,10 +44,8 @@ productRouter.get("/products", async (req, res) => {
 productRouter.get("/products/:id", async (req, res) => {
     try {
         const id = req.params.id;
-
-        const productData = await Product.find({ id: id });
+        const productData = await Product.find({ id: id }, { description:1, _id:0});
         //console.log(id)
-        res.send(productData);
         if (!productData) {
             return res.status(404).send();
         }
@@ -75,8 +68,6 @@ productRouter.delete("/products/:id", async (req, res) => {
         res.status(500).send(error)
     }
 });
-
-
 // update the students document using its id
 productRouter.patch("/products/:id", async (req, res) => {
     try {
@@ -88,5 +79,4 @@ productRouter.patch("/products/:id", async (req, res) => {
         res.status(400).send(error)
     }
 })
-
 module.exports = productRouter;
