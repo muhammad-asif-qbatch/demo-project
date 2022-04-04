@@ -15,8 +15,7 @@ cartRouter.post("/carts", async (req, res) => {
     try {
         const decoded = jwt.verify(token, config.TOKEN_KEY);
         console.log(decoded);
-        if (!decoded)
-            throw new Error('Invalid Token');
+        if (!decoded) throw new Error('Invalid Token');
         const { email } = decoded;
         console.log('Email : ', email);
         const count = req.body.count;
@@ -26,7 +25,7 @@ cartRouter.post("/carts", async (req, res) => {
         console.log(prevCart);
         if (prevCart) {
             const update = await Cart.findOneAndUpdate({ id, user_id }, { count: prevCart.count + count })
-            res.send(update);
+            return res.send(update);
         } else {
             const data = {
                 id,
@@ -37,10 +36,11 @@ cartRouter.post("/carts", async (req, res) => {
             };
             const cart = new Cart(data);
             const createdCart = await cart.save();
-            res.status(201).send(createdCart);
+            return res.status(201).send(createdCart);
         }
     } catch (err) {
         res.status(400).send(err);
+        return;
     }
 });
 cartRouter.get("/all", async (req, res) => {
