@@ -11,6 +11,7 @@ cartRouter.post("/carts", async (req, res) => {
     // console.log('Request: ', JSON.stringify(req.body, null, 2));
     const token = req.headers.authorization.split(' ')[1];
     console.log(token);
+   
     try {
         const decoded = jwt.verify(token, config.TOKEN_KEY);
         console.log(decoded);
